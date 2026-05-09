@@ -48,3 +48,4 @@ class AuthPage(BasePage):
         
     def open_profile(self):
         self.profile_link.click()
+        self.page.wait_for_url("**/user/personal-information**")
