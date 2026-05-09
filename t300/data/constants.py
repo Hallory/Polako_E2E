@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-BASE_URL = os.getenv("BASE_URL", "https://stg.polakohedonist.club/ru")
+BASE_URL = os.getenv("BASE_URL", "https://stg.polakohedonist.club/en")
 
-MANAGER_EMAIL = os.getenv("MANAGER_EMAIL", "")
-MANAGER_PASSWORD = os.getenv("MANAGER_PASSWORD", "")
+MANAGER_USER = {
+    "email": os.getenv("MANAGER_EMAIL"),
+    "password": os.getenv("MANAGER_PASSWORD"),
+}
