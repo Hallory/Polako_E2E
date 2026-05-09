@@ -1,11 +1,11 @@
-BASE_URL = "https://stg.polakohedonist.club/en"
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-MANAGER_USER = {
-    "email": "",
-    "password": "",
-}
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
-REGULAR_USER = {
-    "email": "",
-    "password": "",
-}
+BASE_URL = os.getenv("BASE_URL", "https://stg.polakohedonist.club/ru")
+
+MANAGER_EMAIL = os.getenv("MANAGER_EMAIL", "")
+MANAGER_PASSWORD = os.getenv("MANAGER_PASSWORD", "")
