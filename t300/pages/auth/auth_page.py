@@ -44,3 +44,7 @@ class AuthPage(BasePage):
 
     def should_be_logged_in(self):
         expect(self.profile_link).to_be_visible()
+        
+        
+    def open_profile(self):
+        self.profile_link.click()
