@@ -23,3 +23,5 @@ env/
 *.log
 .DS_Store
 Thumbs.db
+/TP_Polako_E2E/tools/
+/TP_Polako_E2E/artifacts/
