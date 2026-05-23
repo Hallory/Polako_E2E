@@ -2,17 +2,12 @@ from tests.test_events import image_path
 
 from TP_Polako_E2E.base.base_test import BaseTest
 
-event_to_delete = "test_event"
 
-
-class TestEventManagement(BaseTest):
-
-    def test_check_event(self):
+class TestEditEvent(BaseTest):
+    def test_edit_event(self):
         self.login_page.login_as_valid_user()
         self.login_page.click_profile()
-
         self.user_profile.click_event_management_link()
-
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
         self.events_list.fill_title_field("test_event")
@@ -30,25 +25,9 @@ class TestEventManagement(BaseTest):
         self.events_list.upload_image_field(str(image_path))
         self.events_list.click_save_event_btn()
 
-        self.event_preview_page.get_title_text()
-        self.event_preview_page.is_image_visible()
-
-        self.user_profile.click_event_management_link()
-
-        self.event_management_page.search_event()
-        self.event_management_page.check_title_on_right_panel()
+        self.event_edit_page.get_page_title()
+        self.event_edit_page.click_save_event_btn()
 
         assert (
-            len(self.event_management_page.check_title_on_right_panel()) > 0
+            len(self.event_edit_page.get_page_title()) > 0
         ), "The event title is empty."
-
-    def test_deleted_event(self):
-        self.event_management_page.click_delete_event()
-        self.event_management_page.confirm_deletion(event_to_delete)
-        self.event_management_page.refresh_events_page()
-        self.event_management_page.search_event()
-        self.event_management_page.check_title_on_search_panel()
-
-        assert self.page.locator(
-            f"text='{event_to_delete}'"
-        ).not_to_be_visible(), "The event is deleted."

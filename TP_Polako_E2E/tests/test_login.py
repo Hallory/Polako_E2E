@@ -1,18 +1,12 @@
-import os
-
-import pytest
-from dotenv import load_dotenv
-
-from TP_Polako_E2E.pages.auth.login_page import LoginPage
-from TP_Polako_E2E.pages.profile.user_profile_page import UserProfilePage
-
-load_dotenv()
+from TP_Polako_E2E.base.base_test import BaseTest
 
 
-def test_login_success(app_page):
-    login_page = LoginPage(app_page)
-    user_profile = UserProfilePage(app_page)
+class TestLogin(BaseTest):
 
-    login_page.login_as_valid_user()
-    login_page.click_profile()
-    user_profile.verify_logout_button_visible()
+    def test_login_success(self):
+        self.login_page.login_and_go_to_profile()
+
+        self.user_profile.verify_logout_button_visible()
+
+    def test_access_internal_page_without_ui_login(self, authenticated_page):
+        self.user_profile.verify_logout_button_visible()

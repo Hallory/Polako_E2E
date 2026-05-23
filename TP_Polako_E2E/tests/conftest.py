@@ -1,13 +1,23 @@
 import os
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 import pytest
 from dotenv import load_dotenv
 from playwright.sync_api import Page
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+from TP_Polako_E2E.api.auth_api import AuthApi
+from TP_Polako_E2E.api.profile_api import ProfileApi
+from TP_Polako_E2E.pages.auth.login_page import LoginPage
+from TP_Polako_E2E.pages.common.header import HeaderPage
+from TP_Polako_E2E.pages.events.event_edit_page import EventEditPage
+from TP_Polako_E2E.pages.events.event_management_page import EventManagementPage
+from TP_Polako_E2E.pages.events.event_preview_page import EventPreviewPage
+from TP_Polako_E2E.pages.events.events_list_page import EventsListPage
+from TP_Polako_E2E.pages.profile.user_profile_page import UserProfilePage
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(ROOT_DIR / ".env")
 
@@ -20,7 +30,6 @@ missing = [name for name, value in ENVIRONMENTS.items() if not value]
 
 if missing:
     raise RuntimeError(f"Missing env variables: {', '.join(missing)}")
-
 
 ARTIFACTS_DIR = ROOT_DIR / "artifacts"
 
@@ -67,7 +76,6 @@ def pytest_configure(config):
 
 @pytest.fixture(scope="session")
 def base_url(pytestconfig):
-
     env = pytestconfig.getoption("--env")
 
     if env not in ENVIRONMENTS:
@@ -80,7 +88,6 @@ def base_url(pytestconfig):
 def browser_type_launch_args(
     browser_type_launch_args,
 ):
-
     return {
         **browser_type_launch_args,
         "headless": os.getenv(
@@ -95,7 +102,6 @@ def browser_type_launch_args(
 def browser_context_args(
     browser_context_args,
 ):
-
     return {
         **browser_context_args,
         "viewport": {
@@ -156,7 +162,6 @@ def pytest_runtest_makereport(
     item,
     call,
 ):
-
     outcome = yield
     report = outcome.get_result()
 
@@ -183,3 +188,53 @@ def pytest_runtest_makereport(
         path=str(screenshot_path),
         full_page=True,
     )
+
+
+@pytest.fixture(scope="session")
+def api_auth_session():
+    base_url = os.getenv("STG_URL")
+    email = os.getenv("VALID_EMAIL")
+    password = os.getenv("VALID_PASSWORD")
+
+    auth_client = AuthApi(base_url)
+    token = auth_client.login_and_save_token(email, password)
+
+    return {"token": token}
+
+
+@pytest.fixture(scope="session")
+def api_auth_token(api_auth_session):
+    return api_auth_session["token"]
+
+
+@pytest.fixture(scope="function")
+def authorized_profile_api(api_auth_token, base_url):
+    return ProfileApi(base_url=base_url, token=api_auth_token)
+
+
+@pytest.fixture(scope="function")
+def authenticated_page(app_page, api_auth_session):
+    raw_url = os.getenv("STG_URL")
+    parsed = urlparse(raw_url)
+    clean_base_url = f"{parsed.scheme}://{parsed.netloc}"
+    domain = parsed.netloc
+
+    token = api_auth_session["token"]
+    app_page.context.add_cookies(
+        [{"name": "access_token", "value": token, "domain": domain, "path": "/"}]
+    )
+
+    target_url = f"{clean_base_url}/ru/user/personal-information"
+    app_page.goto(target_url)
+    app_page.wait_for_load_state("networkidle")
+
+    return app_page
+    if request.cls is not None:
+        request.cls.page = app_page
+        request.cls.login_page = LoginPage(app_page)
+        request.cls.user_profile = UserProfilePage(app_page)
+        request.cls.events_list = EventsListPage(app_page)
+        request.cls.events_edit_page = EventEditPage(app_page)
+        request.cls.event_preview_page = EventPreviewPage(app_page)
+        request.cls.event_management_page = EventManagementPage(app_page)
+        request.cls.header_page = HeaderPage(app_page)
