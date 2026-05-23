@@ -3,6 +3,7 @@ import os
 import pytest
 
 from TP_Polako_E2E.base.base_page import BasePage
+from TP_Polako_E2E.pages.profile.user_profile_page import UserProfilePage
 
 LOGIN_MODAL_OPEN_BTN = 'button[class="ml-4 flex justify-between gap-1.5 text-sm"]'
 LOGIN_FORM = "//div[contains(@class,'absolute') and contains(@class,'z-[1001]')]"
@@ -73,3 +74,9 @@ class LoginPage(BasePage):
 
     def click_profile(self):
         self.page.click(PROFILE_BTN)
+
+    def login_and_go_to_profile(self) -> UserProfilePage:
+        self.login_as_valid_user()
+        self.click_profile()
+        self.wait_for_network_stable()
+        return UserProfilePage(self.page)
