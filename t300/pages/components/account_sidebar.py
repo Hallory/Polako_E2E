@@ -1,5 +1,4 @@
 from pages.base_page import BasePage
-from playwright.sync_api import expect
 
 
 class AccountSidebar(BasePage):
@@ -10,15 +9,17 @@ class AccountSidebar(BasePage):
             page.locator("nav").filter(has_text="Personal").filter(has_text="Organizer")
         )
 
-        self.profile_link = self.sidebar.get_by_role("link", name="Profile")
-        self.purchases_link = self.sidebar.get_by_role("link", name="My purchases")
-        self.company_link = self.sidebar.get_by_role("link", name="Company")
-        self.manage_events_link = self.sidebar.get_by_role("link", name="Manage events")
-        self.contract_data_link = self.sidebar.get_by_role("link", name="Contract data")
-        self.contracts_link = self.sidebar.get_by_role("link", name="Contracts")
-        self.reports_link = self.sidebar.get_by_role("link", name="Reports")
-        self.create_qr_link = self.sidebar.get_by_role("link", name="Create QR")
-        self.withdrawal_link = self.sidebar.get_by_role("link", name="Withdrawal")
+        self.profile_link = self.sidebar.locator(
+            "a[href='/en/user/personal-information']"
+        )
+        self.purchases_link = self.sidebar.locator("a[href='/en/user/purchases']")
+        self.company_link = self.sidebar.locator("a[href='/en/user/company-settings']")
+        self.manage_events_link = self.sidebar.locator("a[href='/en/user/events']")
+        self.contract_data_link = self.sidebar.locator("a[href='/en/user/contract-data']")
+        self.contracts_link = self.sidebar.locator("a[href='/en/user/contracts']")
+        self.reports_link = self.sidebar.locator("a[href='/en/user/reports']")
+        self.create_qr_link = self.sidebar.locator("a[href='/en/user/qr-generator']")
+        self.withdrawal_link = self.sidebar.locator("a[href='/en/user/withdrawal']")
 
     def open_profile(self):
         self.profile_link.click()
@@ -46,14 +47,3 @@ class AccountSidebar(BasePage):
 
     def open_withdrawal(self):
         self.withdrawal_link.click()
-
-    def should_have_main_links(self):
-        expect(self.sidebar).to_be_visible()
-        expect(self.profile_link).to_be_visible()
-        expect(self.purchases_link).to_be_visible()
-        expect(self.company_link).to_be_visible()
-        expect(self.manage_events_link).to_be_visible()
-        expect(self.contracts_link).to_be_visible()
-        expect(self.reports_link).to_be_visible()
-        expect(self.create_qr_link).to_be_visible()
-        expect(self.withdrawal_link).to_be_visible()

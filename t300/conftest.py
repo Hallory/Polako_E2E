@@ -1,6 +1,20 @@
 import pytest
 from data.constants import BASE_URL, MANAGER_USER
 from pages.app import App
+from utils.api_utils import get_api_auth_state
+
+
+def create_api_auth_app(page):
+    auth_state = get_api_auth_state(
+        BASE_URL, MANAGER_USER["email"], MANAGER_USER["password"]
+    )
+
+    page.set_viewport_size({"width": 1366, "height": 768})
+    page.context.add_cookies(auth_state["cookies"])
+    page.goto(BASE_URL)
+    page.wait_for_timeout(1000)
+
+    return App(page)
 
 
 @pytest.fixture(scope="function")
@@ -11,8 +25,10 @@ def app(page):
 
 
 @pytest.fixture(scope="function")
-def manager_app(app):
-    app.auth.login(MANAGER_USER["email"], MANAGER_USER["password"])
-    app.auth.should_be_logged_in()
+def manager_app(page):
+    return create_api_auth_app(page)
 
-    return app
+
+@pytest.fixture(scope="function")
+def api_auth_app(page):
+    return create_api_auth_app(page)
