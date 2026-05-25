@@ -2,14 +2,19 @@ import os
 from urllib.parse import urlparse
 
 import pytest
+from pages.auth.registration_page import RegistrationPage
 
+from TP_Polako_E2E.pages.auth.forgot_password_page import ForgotPasswordPage
 from TP_Polako_E2E.pages.auth.login_page import LoginPage
 from TP_Polako_E2E.pages.common.header import HeaderPage
 from TP_Polako_E2E.pages.events.event_edit_page import EventEditPage
-from TP_Polako_E2E.pages.events.event_management_page import EventManagementPage
+from TP_Polako_E2E.pages.events.event_management_page import \
+    EventManagementPage
 from TP_Polako_E2E.pages.events.event_preview_page import EventPreviewPage
 from TP_Polako_E2E.pages.events.events_list_page import EventsListPage
 from TP_Polako_E2E.pages.profile.user_profile_page import UserProfilePage
+from TP_Polako_E2E.pages.auth.forgot_password_page import ForgotPasswordPage
+from TP_Polako_E2E.pages.profile.manager_profile_page import ManagerProfilePage
 
 
 class BaseTest:
@@ -18,6 +23,7 @@ class BaseTest:
     events_list: EventsListPage
     api_token: str
     header_page: HeaderPage
+    forgot_password_page: ForgotPasswordPage
 
     @pytest.fixture(autouse=True)
     def setup_pages(self, app_page, authorized_profile_api, api_auth_token):
@@ -31,6 +37,7 @@ class BaseTest:
         self.event_preview_page = EventPreviewPage(app_page)
         self.event_edit_page = EventEditPage(app_page)
         self.event_management_page = EventManagementPage(app_page)
+        self.forgot_password_page = ForgotPasswordPage(app_page)
 
     def authenticate_via_token(self) -> UserProfilePage:
         raw_url = os.getenv("STG_URL")

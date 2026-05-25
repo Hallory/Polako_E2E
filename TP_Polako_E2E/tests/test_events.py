@@ -1,9 +1,7 @@
-from pathlib import Path
+from utils.constants import (EVENT_COST, EVENT_DESCRIPTION, EVENT_DURATION,
+                             EVENT_LOCATION, EVENT_NAME, IMAGE_PATH)
 
 from TP_Polako_E2E.base.base_test import BaseTest
-
-ROOT_DIR = Path(__file__).resolve().parent.parent
-image_path = ROOT_DIR / "test_data" / "test_events_foto.png"
 
 
 class TestEvent(BaseTest):
@@ -25,11 +23,11 @@ class TestEvent(BaseTest):
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
 
-        self.events_list.fill_title_field("test_event")
-        self.events_list.fill_description_field("test_description")
+        self.events_list.fill_title_field(EVENT_NAME)
+        self.events_list.fill_description_field(EVENT_DESCRIPTION)
 
         self.events_list.select_current_date()
-        self.events_list.fill_duration_field("60")
+        self.events_list.fill_duration_field(EVENT_DURATION)
 
         self.events_list.select_category_field()
         self.events_list.select_category_option()
@@ -40,9 +38,9 @@ class TestEvent(BaseTest):
         self.events_list.select_price_field()
         self.events_list.select_price_type()
 
-        self.events_list.fill_visit_cost_field("100")
-        self.events_list.fill_location_field("Test Location (NS)")
+        self.events_list.fill_visit_cost_field(EVENT_COST)
+        self.events_list.fill_location_field(EVENT_LOCATION)
 
-        self.events_list.upload_image_field(str(image_path))
+        self.events_list.upload_image_field(str(IMAGE_PATH))
 
         self.events_list.click_save_event_btn()
