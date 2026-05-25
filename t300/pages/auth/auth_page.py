@@ -1,5 +1,4 @@
 from pages.base_page import BasePage
-from playwright.sync_api import expect
 
 
 class AuthPage(BasePage):
@@ -30,22 +29,6 @@ class AuthPage(BasePage):
         self.fill_login_form(email, password)
         self.submit_sign_in_button.click()
 
-    def should_show_login_form(self):
-        expect(self.login_title).to_be_visible()
-        expect(self.email_input).to_be_visible()
-        expect(self.password_input).to_be_visible()
-        expect(self.submit_sign_in_button).to_be_visible()
-
-    def should_have_disabled_submit_button(self):
-        expect(self.submit_sign_in_button).to_be_disabled()
-
-    def should_have_enabled_submit_button(self):
-        expect(self.submit_sign_in_button).to_be_enabled()
-
-    def should_be_logged_in(self):
-        expect(self.profile_link).to_be_visible()
-        
-        
     def open_profile(self):
         self.profile_link.click()
         self.page.wait_for_url("**/user/personal-information**")
