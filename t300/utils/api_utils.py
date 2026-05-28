@@ -12,7 +12,9 @@ def _extract_access_token(response_data: Dict[str, Any]) -> str | None:
     )
 
 
-def _session_cookies_for_playwright(session: requests.Session, base_url: str) -> list[dict[str, Any]]:
+def _session_cookies_for_playwright(
+    session: requests.Session, base_url: str
+) -> list[dict[str, Any]]:
     parsed_url = urlparse(base_url)
     hostname = parsed_url.hostname
     if not hostname:
@@ -60,7 +62,9 @@ def get_api_auth_state(base_url: str, email: str, password: str) -> Dict[str, An
     )
 
     if not access_token:
-        raise Exception(f"No token in responses: login={login_data}, refresh={refresh_data}")
+        raise Exception(
+            f"No token in responses: login={login_data}, refresh={refresh_data}"
+        )
 
     return {
         "access_token": access_token,
@@ -72,17 +76,13 @@ def get_api_token(base_url: str, email: str, password: str) -> str:
     return get_api_auth_state(base_url, email, password)["access_token"]
 
 
-def create_event_api(base_url: str, token: str, event_data: Dict[str, Any]) -> Dict[str, Any]:
+def create_event_api(
+    base_url: str, token: str, event_data: Dict[str, Any]
+) -> Dict[str, Any]:
     base_api_url = base_url.replace("/en", "").rstrip("/")
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.post(
-        f"{base_api_url}/api/events",
-        json=event_data,
-        headers=headers,
-        timeout=30
+        f"{base_api_url}/api/events", json=event_data, headers=headers, timeout=30
     )
     response.raise_for_status()
     return response.json()
@@ -90,14 +90,9 @@ def create_event_api(base_url: str, token: str, event_data: Dict[str, Any]) -> D
 
 def delete_event_api(base_url: str, token: str, event_id: str) -> Dict[str, Any]:
     base_api_url = base_url.replace("/en", "").rstrip("/")
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.post(
-        f"{base_api_url}/api/events/{event_id}/delete",
-        headers=headers,
-        timeout=30
+        f"{base_api_url}/api/events/{event_id}/delete", headers=headers, timeout=30
     )
     response.raise_for_status()
     return response.json() if response.text else {}
@@ -105,13 +100,8 @@ def delete_event_api(base_url: str, token: str, event_id: str) -> Dict[str, Any]
 
 def event_exists_api(base_url: str, token: str, event_id: str) -> bool:
     base_api_url = base_url.replace("/en", "").rstrip("/")
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.get(
-        f"{base_api_url}/api/events/{event_id}",
-        headers=headers,
-        timeout=30
+        f"{base_api_url}/api/events/{event_id}", headers=headers, timeout=30
     )
     return response.status_code == 200

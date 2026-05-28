@@ -9,10 +9,8 @@ def create_api_auth_app(page):
         BASE_URL, MANAGER_USER["email"], MANAGER_USER["password"]
     )
 
-    page.set_viewport_size({"width": 1366, "height": 768})
     page.context.add_cookies(auth_state["cookies"])
     page.goto(BASE_URL)
-    page.wait_for_timeout(1000)
 
     return App(page)
 

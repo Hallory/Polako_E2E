@@ -22,15 +22,12 @@ def test_sign_in_enabled_after_fill(app):
 
 def test_manager_can_login(app):
     app.auth.login(MANAGER_USER["email"], MANAGER_USER["password"])
-    app.page.wait_for_timeout(3000)
     expect(app.auth.profile_link).to_be_visible()
 
 
 def test_homepage_and_ui_login(app):
     expect(app.page).to_have_url(re.compile(r".*\/en\/?"))
-    
+
     app.auth.login(MANAGER_USER["email"], MANAGER_USER["password"])
-    
-    app.page.wait_for_timeout(5000)
-    
+
     expect(app.auth.profile_link).to_be_visible()
