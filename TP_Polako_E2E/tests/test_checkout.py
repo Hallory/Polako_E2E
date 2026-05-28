@@ -1,45 +1,34 @@
-import pytest
 from TP_Polako_E2E.base.base_test import BaseTest
-from TP_Polako_E2E.pages.ticket.ticket_selection_page import TicketSelectionPage
-from TP_Polako_E2E.pages.ticket.checkout_page import CheckoutPage
-from TP_Polako_E2E.pages.ticket.payment_gateway_page import PaymentGatewayPage
-from TP_Polako_E2E.utils.config import Config
 
 
-class TestTicketPurchase(BaseTest):
+class TestTicketCart(BaseTest):
 
-    @pytest.mark.ui
-    @pytest.mark.smoke
-    def test_successful_ticket_checkout_flow(self):
-
-        Config.validate()
-
+    def test_add_first_ticket_to_cart(self):
         self.login_page.login_as_valid_user()
-        ticket_selection = TicketSelectionPage(self.page)
-        checkout = CheckoutPage(self.page)
-        gateway = PaymentGatewayPage(self.page)
 
+        self.events_list.click_active_slider_event()
 
-        self.page.goto(
-            Config.STG_URL + "/sr/events/ezhegodnyj-rok-koncert-uchenikov-muzykalnoj-shkoly-kreativni-m-kutak-ezhegodnyj-rok-koncer-test-location-ns-2026-05-27-12-00-1")
+        self.ticket_selection_page.select_test_ticket()
+        self.ticket_selection_page.open_cart()
 
-        ticket_selection.select_free_seat()
-        ticket_selection.open_cart()
-        ticket_selection.click_buy_button()
+        self.ticket_selection_page.assert_cart_timer_is_visible()
 
-        checkout.fill_checkout_form(
-            first_name="Test",
-            last_name="User",
-            email=Config.VALID_EMAIL
-        )
+    def test_add_second_ticket_to_cart(self):
+        self.login_page.login_as_valid_user()
 
-        checkout.accept_terms_and_conditions()
-        checkout.click_pay_button()
-        checkout.proceed_to_payment_gateway()
+        self.events_list.click_active_slider_event()
 
+        self.ticket_selection_page.select_testo123_ticket()
+        self.ticket_selection_page.open_cart()
 
-        gateway.fill_card_details()
-        gateway.click_submit_payment()
+        self.ticket_selection_page.assert_cart_timer_is_visible()
 
+    def test_add_third_ticket_to_cart(self):
+        self.login_page.login_as_valid_user()
 
-        self.page.pause()
+        self.events_list.click_active_slider_event()
+
+        self.ticket_selection_page.select_test321_ticket()
+        self.ticket_selection_page.open_cart()
+
+        self.ticket_selection_page.assert_cart_timer_is_visible()

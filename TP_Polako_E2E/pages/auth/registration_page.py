@@ -1,7 +1,14 @@
-from utils.constants import COMPANY_REGISTRATION_SUCCESS_MESSAGE, COOL_BTN_TEXT
+from TP_Polako_E2E.utils.constants import (
+    COMPANY_REGISTRATION_SUCCESS_MESSAGE,
+    COOL_BTN_TEXT,
+)
 
 from TP_Polako_E2E.base.base_page import BasePage
 from TP_Polako_E2E.pages.auth.login_page import LOGIN_FORM
+from TP_Polako_E2E.utils.constants import (
+    COMPANY_REGISTRATION_SUCCESS_MESSAGE,
+    COOL_BTN_TEXT,
+)
 
 NO_ACCOUNT_BTN = "header div.absolute > form + button"
 ORGANIZER_TAB_BTN = "div.absolute.right-0 div.border-b button:nth-child(2)"
@@ -21,8 +28,12 @@ CAPCHA_TOKEN = "aHEqAAAAAEvjOmDiC4CVVh16pgaXcFHpQAgt"
 
 RECAPTCHA_VERIFY_BTN = "#recaptcha-verify-button"
 
-SUCCESS_MESSAGE = "div.absolute.right-0 p.text-2xl"
+SUCCESS_MESSAGE = "div.absolute.right-0 p.text-center.text-2xl"
 COOL_BTN = "div.absolute.right-0 button.btn-accent"
+COMPANY_REGISTRATION_INFORM_MESSAGE = (
+    "div.absolute.right-0 div.flex-col p.mt-3.text-base"
+)
+COMPANY_REGISTRATION_ERROR_MESSAGE = "div.absolute.right-0 > p"
 
 
 class RegistrationPage(BasePage):
@@ -49,9 +60,14 @@ class RegistrationPage(BasePage):
 
     def verify_success_registration(self):
         self.verify_element_is_visible(
-            SUCCESS_MESSAGE, COMPANY_REGISTRATION_SUCCESS_MESSAGE
+            SUCCESS_MESSAGE, COMPANY_REGISTRATION_ERROR_MESSAGE, timeout=10000
         )
         self.verify_element_is_visible(COOL_BTN, COOL_BTN_TEXT)
 
     def click_cool_button(self):
         self.click(COOL_BTN)
+
+    def verify_failure_inform_message_company_registration(self):
+        self.verify_element_is_visible(
+            COMPANY_REGISTRATION_INFORM_MESSAGE, COMPANY_REGISTRATION_ERROR_MESSAGE
+        )

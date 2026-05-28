@@ -11,11 +11,11 @@ class PaymentGatewayPage(BasePage):
 
     def fill_card_details(self):
 
-        self.page.wait_for_selector(self._CARD_NUMBER_INPUT, timeout=45000, state="visible")
-
+        self.page.wait_for_selector(
+            self._CARD_NUMBER_INPUT, timeout=45000, state="visible"
+        )
 
         self.fill(self._CARD_NUMBER_INPUT, Config.CARD_NUMBER)
-
 
         self.page.select_option(self._EXPIRY_MONTH_SELECT, Config.EXP_MONTH)
         self.page.select_option(self._EXPIRY_YEAR_SELECT, Config.EXP_YEAR)

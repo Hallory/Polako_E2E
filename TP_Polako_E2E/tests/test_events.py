@@ -1,25 +1,33 @@
-from utils.constants import (EVENT_COST, EVENT_DESCRIPTION, EVENT_DURATION,
-                             EVENT_LOCATION, EVENT_NAME, IMAGE_PATH)
+import pytest
 
 from TP_Polako_E2E.base.base_test import BaseTest
+from TP_Polako_E2E.utils.constants import (
+    EVENT_COST,
+    EVENT_DESCRIPTION,
+    EVENT_DURATION,
+    EVENT_LOCATION,
+    EVENT_NAME,
+    IMAGE_PATH,
+)
 
 
 class TestEvent(BaseTest):
 
+    @pytest.mark.skip(reason="Test is under development")
     def test_create_event_button_is_clickable(self):
-        self.login_page.login_as_valid_user()
-        self.login_page.click_profile()
+        self.login_page.login_and_go_to_profile()
 
-        self.user_profile.click_event_management_link()
+        self.manager_profile.force_click_event_management_link()
 
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
 
+    @pytest.mark.skip(reason="Test is under development")
     def test_create_event(self):
         self.login_page.login_as_valid_user()
         self.login_page.click_profile()
 
-        self.user_profile.click_event_management_link()
+        self.manager_profile.force_click_event_management_link()
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
 

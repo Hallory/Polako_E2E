@@ -2,9 +2,9 @@ from typing import Callable
 
 from TP_Polako_E2E.base.base_page import BasePage
 
-PROFILE_TAB = 'nav a[href*="personal-information"]'
-PURCHASES_TAB = 'nav a[href*="purchases"]'
-BALANCE_TAB = 'nav a[href*="balance"]'
+PROFILE_BTN = 'nav a[href*="personal-information"]'
+PURCHASES_BTN = 'nav a[href*="purchases"]'
+BALANCE_BTN = 'nav a[href*="balance"]'
 
 USER_ROLE_BADGE = "nav ~ div div.gap-1 span"
 LOGOUT_BTN = "main div.rounded-2xl button"
@@ -29,23 +29,23 @@ CHANGE_PASSWORD_BTN = 'main form:nth-of-type(2) button[type="submit"]'
 
 class UserProfilePage(BasePage):
     # SIDEBAR
-    def click_profile_tab(self):
-        self.page.locator(PROFILE_TAB).click()
+    def click_profile_btn(self):
+        self.page.locator(PROFILE_BTN).click()
 
-    def click_purchase_history_tab(self):
-        self.page.locator(PURCHASES_TAB).click()
+    def click_purchase_history_btn(self):
+        self.page.locator(PURCHASES_BTN).click()
 
-    def click_balance_tab(self):
-        self.page.locator(BALANCE_TAB).click()
+    def click_balance_btn(self):
+        self.page.locator(BALANCE_BTN).click()
 
-    def verify_profile_tab_visible(self, timeout: int = 3000):
-        self.page.locator(PROFILE_TAB).wait_for(state="visible", timeout=timeout)
+    def verify_profile_btn_visible(self, timeout: int = 3000):
+        self.page.locator(PROFILE_BTN).wait_for(state="visible", timeout=timeout)
 
-    def verify_purchase_history_tab_visible(self, timeout: int = 3000):
-        self.page.locator(PURCHASES_TAB).wait_for(state="visible", timeout=timeout)
+    def verify_purchase_history_btn_visible(self, timeout: int = 3000):
+        self.page.locator(PURCHASES_BTN).wait_for(state="visible", timeout=timeout)
 
-    def verify_balance_tab_visible(self, timeout: int = 3000):
-        self.page.locator(BALANCE_TAB).wait_for(state="visible", timeout=timeout)
+    def verify_balance_btn_visible(self, timeout: int = 3000):
+        self.page.locator(BALANCE_BTN).wait_for(state="visible", timeout=timeout)
 
     # PROFILE INFORMATION
     def verify_user_role_badge(self):
@@ -145,7 +145,15 @@ class UserProfilePage(BasePage):
         }
 
     def click_save_profile(self):
-        self.page.locator(SAVE_PROFILE_BTN).click()
+        with self.page.expect_response(
+            lambda response: "user" in response.url or "profile" in response.url
+        ) as response_info:
+            self.page.click("button[type='submit']")
+
+        assert response_info.value.status in [
+            200,
+            201,
+        ], f"The backend returned an error while saving: {response_info.value.status}"
 
     # CHANGE PASSWORD
     # NEW PASSWORD
@@ -173,9 +181,29 @@ class UserProfilePage(BasePage):
     def click_change_password(self):
         self.page.locator(CHANGE_PASSWORD_BTN).click()
 
-    def change_password(self, new_pass: str, confirm_pass: str):
+    def change_password(self, new_pass: str, confirm_pass: str, expected_status: int | None = 200):
         if new_pass is not None:
             self.fill_new_password(new_pass)
         if confirm_pass is not None:
             self.fill_confirm_password(confirm_pass)
-        self.click_change_password()
+
+        if expected_status is None:
+            self.click_change_password()
+            return None
+
+        with self.page.expect_response(
+                lambda response: "password" in response.url,
+                timeout=10000
+        ) as response_info:
+            self.click_change_password()
+
+        actual_status = response_info.value.status
+
+        if expected_status == 200:
+            assert actual_status in [200, 204], \
+                f"A successful password reset was expected, but the backend returned a code: {actual_status}"
+        else:
+            assert actual_status == expected_status, \
+                f"An error code was expected {expected_status}, but the backend returned a code: {actual_status}"
+
+        return response_info.value

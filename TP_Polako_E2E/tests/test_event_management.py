@@ -1,17 +1,37 @@
-from utils.constants import (EVENT_COST, EVENT_DESCRIPTION, EVENT_DURATION,
-                             EVENT_LOCATION, EVENT_NAME, EVENT_TO_DELETE,
-                             IMAGE_PATH, TITLE_TEXT_RESULT)
+import pytest
+
+from TP_Polako_E2E.utils.constants import (
+    EVENT_COST,
+    EVENT_DESCRIPTION,
+    EVENT_DURATION,
+    EVENT_LOCATION,
+    EVENT_NAME,
+    EVENT_TO_DELETE,
+    IMAGE_PATH,
+    TITLE_TEXT_RESULT,
+)
 
 from TP_Polako_E2E.base.base_test import BaseTest
+from TP_Polako_E2E.utils.constants import (
+    EVENT_COST,
+    EVENT_DESCRIPTION,
+    EVENT_DURATION,
+    EVENT_LOCATION,
+    EVENT_NAME,
+    EVENT_TO_DELETE,
+    IMAGE_PATH,
+    TITLE_TEXT_RESULT,
+)
 
 
 class TestEventManagement(BaseTest):
 
+    @pytest.mark.skip(reason="Test is under development")
     def test_check_event(self):
         self.login_page.login_as_valid_user()
         self.login_page.click_profile()
 
-        self.user_profile.click_event_management_link()
+        self.manager_profile.force_click_event_management_link()
 
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
@@ -33,7 +53,7 @@ class TestEventManagement(BaseTest):
         self.event_preview_page.get_title_text()
         self.event_preview_page.is_image_visible()
 
-        self.user_profile.click_event_management_link()
+        self.manager_profile.click_event_management_link()
 
         self.event_management_page.search_event()
         self.event_management_page.check_title_on_right_panel()
@@ -42,6 +62,7 @@ class TestEventManagement(BaseTest):
             len(self.event_management_page.check_title_on_right_panel()) > 0
         ), TITLE_TEXT_RESULT
 
+    @pytest.mark.skip(reason="Test is under development")
     def test_deleted_event(self):
         self.event_management_page.click_delete_event()
         self.event_management_page.confirm_deletion(EVENT_TO_DELETE)

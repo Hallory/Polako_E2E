@@ -1,8 +1,9 @@
 import os
+
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 
 class Config:
     VALID_EMAIL = os.getenv("VALID_EMAIL")
@@ -17,11 +18,14 @@ class Config:
     PROMO20 = os.getenv("PROMO20")
     PROMO30 = os.getenv("PROMO30")
     AUTH_TOKEN = os.getenv("AUTH_TOKEN")
+    TEST_EVENT_SLUG = os.getenv("TEST_EVENT_SLUG")
 
     @classmethod
     def validate(cls):
 
-        required = ["STG_URL", "CARD_NUMBER", "SVV_CODE"]
+        required = ["STG_URL", "CARD_NUMBER", "SVV_CODE", "TEST_EVENT_SLUG"]
         for var in required:
             if not getattr(cls, var):
-                raise ValueError(f"Error: Environment variable {var} is not set in .env!")
+                raise ValueError(
+                    f"Error: Environment variable {var} is not set in .env!"
+                )

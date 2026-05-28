@@ -1,11 +1,11 @@
 from TP_Polako_E2E.pages.profile.user_profile_page import UserProfilePage
 
-TOP_WARNING_BANNER = 'div.bg-amber-50'
+TOP_WARNING_BANNER = "div.bg-amber-50"
 FILL_DATA_BTN = 'div.bg-amber-50 a[href*="contract-data"]'
 CREATE_CONTRACT_BTN = 'div.bg-amber-50 a[href*="contracts"]'
 
-MANAGER_ROLE_BADGE = 'main div.gap-1 > div > span:nth-of-type(1)'
-COMMISSION_BADGE = 'main div.gap-1 > div > span:nth-of-type(2)'
+MANAGER_ROLE_BADGE = "main div.gap-1 > div > span:nth-of-type(1)"
+COMMISSION_BADGE = "main div.gap-1 > div > span:nth-of-type(2)"
 
 COMPANY_BTN = 'nav a[href*="company"]'
 MANAGE_EVENTS_BTN = 'nav a[href*="events"]'
@@ -48,6 +48,13 @@ class ManagerProfilePage(UserProfilePage):
 
     def click_event_management_link(self):
         self.page.locator(MANAGE_EVENTS_BTN).click()
+
+    def force_click_event_management_link(self):
+        link = self.page.locator(MANAGE_EVENTS_BTN)
+        link.wait_for(state="visible", timeout=500)
+        for _ in range(5):
+            link.click(force=True)
+            self.page.wait_for_timeout(500)
 
     def verify_event_management_link_visible(self):
         self.page.locator(MANAGE_EVENTS_BTN).wait_for(state="visible")

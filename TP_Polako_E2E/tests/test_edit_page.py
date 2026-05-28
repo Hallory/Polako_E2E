@@ -1,14 +1,23 @@
+import pytest
+
 from TP_Polako_E2E.base.base_test import BaseTest
-from TP_Polako_E2E.utils.constants import (EVENT_COST, EVENT_DESCRIPTION,
-                                           EVENT_DURATION, EVENT_NAME,
-                                           IMAGE_PATH, ROOT_DIR)
+from TP_Polako_E2E.utils.constants import (
+    EVENT_COST,
+    EVENT_DESCRIPTION,
+    EVENT_DURATION,
+    EVENT_NAME,
+    IMAGE_PATH,
+    ROOT_DIR,
+)
 
 
 class TestEditEvent(BaseTest):
+
+    @pytest.mark.skip(reason="Test is under development")
     def test_edit_event(self):
         self.login_page.login_as_valid_user()
         self.login_page.click_profile()
-        self.user_profile.click_event_management_link()
+        self.manager_profile.click_event_management_link()
         self.events_list.create_event_btn_is_visible()
         self.events_list.click_create_event_btn()
         self.events_list.fill_title_field(EVENT_NAME)

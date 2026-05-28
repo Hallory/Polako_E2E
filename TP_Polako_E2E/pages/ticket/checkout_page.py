@@ -1,5 +1,6 @@
 from TP_Polako_E2E.base.base_page import BasePage
 
+
 class CheckoutPage(BasePage):
     _FIRST_NAME_INPUT = "input[name='customer_first_name']"
     _LAST_NAME_INPUT = "input[name='customer_second_name']"
@@ -9,7 +10,9 @@ class CheckoutPage(BasePage):
     _TERMS_CHECKBOX_2 = ".flex.h-5"
 
     def fill_checkout_form(self, first_name: str, last_name: str, email: str):
-        self.page.locator(self._FIRST_NAME_INPUT).wait_for(state="visible", timeout=10000)
+        self.page.locator(self._FIRST_NAME_INPUT).wait_for(
+            state="visible", timeout=10000
+        )
         self.fill(self._FIRST_NAME_INPUT, first_name)
         self.fill(self._LAST_NAME_INPUT, last_name)
         self.fill(self._EMAIL_INPUT, email)

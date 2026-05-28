@@ -3,7 +3,7 @@ from playwright.sync_api import expect
 
 from TP_Polako_E2E.base.base_test import BaseTest
 from TP_Polako_E2E.pages.common.header import CONTACT_LINKS
-from TP_Polako_E2E.utils.constants import expected_markers, sections_mapping
+from TP_Polako_E2E.utils.constants import EXPECTED_MARKERS, SECTIONS_MAPPING
 
 
 class TestHeader(BaseTest):
@@ -53,7 +53,7 @@ class TestHeader(BaseTest):
         expect(self.page).to_have_url("https://stg.polakohedonist.club/ru")
 
     def test_main_navigation_links(self):
-        for section, url_path in sections_mapping.items():
+        for section, url_path in SECTIONS_MAPPING.items():
             self.header_page.verify_nav_link_visible(section)
             self.header_page.click_nav_link(section)
 
@@ -79,7 +79,7 @@ class TestHeader(BaseTest):
 
         actual_href = self.header_page.get_contact_href(network_name)
 
-        assert expected_markers[network_name] in actual_href, (
-            f"Ошибка в соцсети {network_name}! "
-            f"Ожидали маркер '{expected_markers[network_name]}', но получили '{actual_href}'"
+        assert EXPECTED_MARKERS[network_name] in actual_href, (
+            f"Error in social media {network_name}! "
+            f"Wait marker '{EXPECTED_MARKERS[network_name]}', but received '{actual_href}'"
         )

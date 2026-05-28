@@ -44,12 +44,14 @@ class LoginPage(BasePage):
     def click_login_button(self):
         self.page.locator(LOGIN_SUBMIT_BTN).click()
 
-    def get_credentials(self) -> tuple[str, str]:
-        email = os.getenv("VALID_EMAIL")
-        password = os.getenv("VALID_PASSWORD")
+    def get_credentials(
+        self, email_key: str = "VALID_EMAIL", password_key: str = "VALID_PASSWORD"
+    ) -> tuple[str, str]:
+        email = os.getenv(email_key)
+        password = os.getenv(password_key)
 
         if not email or not password:
-            pytest.fail("VALID_EMAIL или VALID_PASSWORD not specified in .env")
+            pytest.fail(f"{email_key} or {password_key} not in file .env")
 
         return email, password
 
@@ -57,12 +59,15 @@ class LoginPage(BasePage):
         email, password = self.get_credentials()
 
         self.open_login_modal()
-        self.login(
-            email,
-            password,
+        self.login(email, password)
+
+    def login_as_simple_user(self):
+        email, password = self.get_credentials(
+            email_key="SIMPLE_USER_EMAIL", password_key="SIMPLE_USER_PASSWORD"
         )
 
-        self.wait_for_network_stable()
+        self.open_login_modal()
+        self.login(email, password)
 
     def click_profile(self):
         self.page.click(PROFILE_BTN)

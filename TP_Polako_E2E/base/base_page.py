@@ -17,9 +17,11 @@ class BasePage:
     def is_visible(self, locator: str) -> bool:
         return self.page.locator(locator).is_visible()
 
-    def verify_element_is_visible(self, selector: str, element_name: str = "Element"):
+    def verify_element_is_visible(
+        self, selector: str, element_name: str = "Element", timeout: int = 5000
+    ):
         locator = self.page.locator(selector)
-        expect(locator).to_be_visible()
+        expect(locator).to_be_visible(timeout=timeout)
 
     def get_text(self, locator: str) -> str:
         return self.page.locator(locator).inner_text()

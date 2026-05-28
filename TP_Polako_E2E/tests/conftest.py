@@ -184,20 +184,46 @@ def pytest_runtest_makereport(
 
 
 @pytest.fixture(scope="session")
-def api_auth_session():
+def user_api_token():
+    base_url = os.getenv("STG_URL")
+    email = os.getenv("SIMPLE_USER_EMAIL")
+    password = os.getenv("SIMPLE_USER_PASSWORD")
+
+    auth_client = AuthApi(base_url)
+    return auth_client.login_and_save_token(email, password)
+
+
+@pytest.fixture(scope="session")
+def manager_api_token():
     base_url = os.getenv("STG_URL")
     email = os.getenv("VALID_EMAIL")
     password = os.getenv("VALID_PASSWORD")
 
     auth_client = AuthApi(base_url)
-    token = auth_client.login_and_save_token(email, password)
-
-    return {"token": token}
+    return auth_client.login_and_save_token(email, password)
 
 
 @pytest.fixture(scope="session")
-def api_auth_token(api_auth_session):
-    return api_auth_session["token"]
+def api_auth_token(manager_api_token):
+    return manager_api_token
+
+
+def _authenticate_via_cookie(page, token: str):
+    raw_url = os.getenv("STG_URL")
+    parsed = urlparse(raw_url)
+    clean_base_url = f"{parsed.scheme}://{parsed.netloc}"
+    domain = parsed.netloc
+
+    page.context.add_cookies([
+        {
+            "name": "access_token",
+            "value": token,
+            "domain": domain,
+            "path": "/",
+        }
+    ])
+    page.goto(f"{clean_base_url}/ru/user/personal-information")
+    page.wait_for_load_state("networkidle")
 
 
 @pytest.fixture(scope="function")
@@ -206,19 +232,17 @@ def authorized_profile_api(api_auth_token, base_url):
 
 
 @pytest.fixture(scope="function")
-def authenticated_page(app_page, api_auth_session):
-    raw_url = os.getenv("STG_URL")
-    parsed = urlparse(raw_url)
-    clean_base_url = f"{parsed.scheme}://{parsed.netloc}"
-    domain = parsed.netloc
-
-    token = api_auth_session["token"]
-    app_page.context.add_cookies(
-        [{"name": "access_token", "value": token, "domain": domain, "path": "/"}]
-    )
-
-    target_url = f"{clean_base_url}/ru/user/personal-information"
-    app_page.goto(target_url)
-    app_page.wait_for_load_state("networkidle")
-
+def user_page(app_page, user_api_token):
+    _authenticate_via_cookie(app_page, user_api_token)
     return app_page
+
+
+@pytest.fixture(scope="function")
+def manager_page(app_page, manager_api_token):
+    _authenticate_via_cookie(app_page, manager_api_token)
+    return app_page
+
+
+@pytest.fixture(scope="function")
+def authenticated_page(manager_page):
+    return manager_page
