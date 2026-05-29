@@ -9,16 +9,14 @@ class PersonalInformationPage(BasePage):
     def __init__(self, page):
         super().__init__(page)
 
-        self.profile_nav_link = page.locator("a[href='/en/user/personal-information']")
-        self.basic_information_heading = page.get_by_text(
-            "Basic information", exact=True
+        self.profile_nav_link = page.locator("a[href*='personal-information']")
+        self.basic_information_heading = page.locator(
+            "form:nth-child(1) > p:nth-child(1)"
         )
-        self.contact_information_heading = page.get_by_text(
-            "Contact information", exact=True
+        self.contact_information_heading = page.locator(
+            "form:nth-child(1) > p.mb-2.mt-4"
         )
-        self.change_password_heading = page.locator("p").filter(
-            has_text="Change the password"
-        ).first
+        self.change_password_heading = page.locator("form:nth-child(2) > p")
 
         self.first_name_input = page.locator("input[name='first_name']")
         self.last_name_input = page.locator("input[name='last_name']")
@@ -67,3 +65,4 @@ class PersonalInformationPage(BasePage):
 
     def submit_password_change(self):
         self.confirm_password_button.click()
+
