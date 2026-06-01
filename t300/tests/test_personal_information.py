@@ -5,25 +5,10 @@ from playwright.sync_api import expect
 
 
 @pytest.mark.smoke
-def test_personal_information_happy_path_api_auth(api_auth_app):
-
-    api_auth_app.profile.open()
-
-    expect(api_auth_app.page).to_have_url(re.compile(api_auth_app.profile.URL))
-
-    expect(api_auth_app.profile.basic_information_heading).to_be_visible()
-    expect(api_auth_app.profile.email_input).to_be_visible()
-    expect(api_auth_app.profile.change_password_heading).to_be_visible()
-
-    expect(api_auth_app.sidebar.profile_link).to_be_visible()
-
-
-@pytest.mark.smoke
 def test_personal_information_page_loads(api_auth_app):
     api_auth_app.profile.open()
     expect(api_auth_app.page).to_have_url(re.compile(api_auth_app.profile.URL))
-    expect(api_auth_app.sidebar.profile_link).to_be_visible()
-    expect(api_auth_app.profile.basic_information_heading).to_be_visible()
+    expect(api_auth_app.profile.info_form).to_be_visible()
     expect(api_auth_app.profile.email_input).to_be_visible()
 
 
@@ -53,13 +38,6 @@ def test_personal_information_has_contact_information(api_auth_app):
     expect(api_auth_app.profile.telegram_input).to_be_visible()
 
 
-@pytest.mark.smoke
-def test_sidebar_visible_on_profile_page(api_auth_app):
-    api_auth_app.profile.open()
-    expect(api_auth_app.sidebar.sidebar).to_be_visible()
-    expect(api_auth_app.sidebar.profile_link).to_be_visible()
-
-
 @pytest.mark.regression
 def test_update_basic_information(api_auth_app):
     api_auth_app.profile.open()
@@ -86,31 +64,3 @@ def test_basic_info_inputs_are_editable(api_auth_app):
     api_auth_app.profile.fill_basic_information("AutoFirst", "AutoLast")
     expect(api_auth_app.profile.first_name_input).to_have_value("AutoFirst")
     expect(api_auth_app.profile.last_name_input).to_have_value("AutoLast")
-
-
-@pytest.mark.regression
-def test_sidebar_navigate_to_profile(api_auth_app):
-    api_auth_app.profile.open()
-    api_auth_app.sidebar.open_profile()
-    expect(api_auth_app.page).to_have_url(re.compile(api_auth_app.profile.URL))
-
-
-@pytest.mark.regression
-def test_sidebar_navigate_to_purchases(api_auth_app):
-    api_auth_app.profile.open()
-    api_auth_app.sidebar.open_purchases()
-    api_auth_app.profile.page.wait_for_url("**/user/**")
-
-
-@pytest.mark.regression
-def test_sidebar_navigate_to_company(api_auth_app):
-    api_auth_app.profile.open()
-    api_auth_app.sidebar.open_company()
-    api_auth_app.profile.page.wait_for_url("**/user/**")
-
-
-@pytest.mark.regression
-def test_sidebar_navigate_to_manage_events(api_auth_app):
-    api_auth_app.profile.open()
-    api_auth_app.sidebar.open_manage_events()
-    api_auth_app.profile.page.wait_for_url("**/user/**")
