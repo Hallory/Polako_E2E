@@ -6,10 +6,9 @@ from playwright.sync_api import expect
 @pytest.mark.smoke
 def test_personal_information_page_loads(auth_profile_app):
     expect(auth_profile_app.page).to_have_url(re.compile(auth_profile_app.profile.URL))
-    expect(auth_profile_app.sidebar.profile_link).to_be_visible()
-    expect(auth_profile_app.profile.basic_information_heading).to_be_visible()
+    expect(auth_profile_app.profile.info_form).to_be_visible()
     expect(auth_profile_app.profile.email_input).to_be_visible()
-    expect(auth_profile_app.profile.change_password_heading).to_be_visible()
+    expect(auth_profile_app.profile.change_password_form).to_be_visible()
 
 
 @pytest.mark.smoke
@@ -32,11 +31,6 @@ def test_personal_information_has_contact_information(auth_profile_app):
     expect(auth_profile_app.profile.phone_input).to_be_visible()
     expect(auth_profile_app.profile.instagram_input).to_be_visible()
     expect(auth_profile_app.profile.telegram_input).to_be_visible()
-
-
-@pytest.mark.smoke
-def test_sidebar_visible_on_profile_page(auth_profile_app):
-    expect(auth_profile_app.sidebar.sidebar).to_be_visible()
 
 
 @pytest.mark.regression

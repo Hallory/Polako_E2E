@@ -1,3 +1,4 @@
+import time
 from typing import Any, Dict
 from urllib.parse import urlparse
 
@@ -37,22 +38,47 @@ def _session_cookies_for_playwright(
     return cookies
 
 
+def _post_with_retry(
+    session: requests.Session, url: str, payload: Dict[str, Any]
+) -> requests.Response:
+    last_error = None
+
+    for attempt in range(3):
+        try:
+            response = session.post(url, json=payload, timeout=30)
+            if response.status_code not in (502, 503, 504):
+                return response
+            last_error = requests.HTTPError(
+                f"{response.status_code} Server Error for url: {url}",
+                response=response,
+            )
+        except requests.RequestException as error:
+            last_error = error
+
+        if attempt < 2:
+            time.sleep(1)
+
+    if last_error:
+        raise last_error
+    raise RuntimeError(f"POST request failed: {url}")
+
+
 def get_api_auth_state(base_url: str, email: str, password: str) -> Dict[str, Any]:
     base_api_url = base_url.replace("/en", "").rstrip("/")
     session = requests.Session()
 
-    login_response = session.post(
+    login_response = _post_with_retry(
+        session,
         f"{base_api_url}/api/auth/login",
-        json={"email": email, "password": password, "mode": "cookie"},
-        timeout=30,
+        {"email": email, "password": password, "mode": "cookie"},
     )
     login_response.raise_for_status()
 
     login_data = login_response.json()
-    refresh_response = session.post(
+    refresh_response = _post_with_retry(
+        session,
         f"{base_api_url}/api/auth/refresh",
-        json={"mode": "cookie"},
-        timeout=30,
+        {"mode": "cookie"},
     )
     refresh_response.raise_for_status()
     refresh_data = refresh_response.json()

@@ -9,15 +9,6 @@ class PersonalInformationPage(BasePage):
     def __init__(self, page):
         super().__init__(page)
 
-        self.profile_nav_link = page.locator("a[href*='personal-information']")
-        self.basic_information_heading = page.locator(
-            "form:nth-child(1) > p:nth-child(1)"
-        )
-        self.contact_information_heading = page.locator(
-            "form:nth-child(1) > p.mb-2.mt-4"
-        )
-        self.change_password_heading = page.locator("form:nth-child(2) > p")
-
         self.first_name_input = page.locator("input[name='first_name']")
         self.last_name_input = page.locator("input[name='last_name']")
         self.email_input = page.locator("input[name='email']")
@@ -38,14 +29,21 @@ class PersonalInformationPage(BasePage):
         )
 
     def open(self):
-        self.page.goto(f"{BASE_URL.rstrip('/')}{self.URL}", wait_until="domcontentloaded")
-        self.page.wait_for_url(f"**{self.URL}**", timeout=10000)
-        try:
-            self.first_name_input.wait_for(state="visible", timeout=15000)
-        except PlaywrightTimeoutError:
-            self.page.reload(wait_until="domcontentloaded")
-            self.page.wait_for_url(f"**{self.URL}**", timeout=10000)
-            self.first_name_input.wait_for(state="visible", timeout=15000)
+        if self.first_name_input.is_visible():
+            return
+
+        profile_url = f"{BASE_URL.rstrip('/')}{self.URL}"
+
+        for attempt in range(2):
+            try:
+                self.page.goto(profile_url, wait_until="domcontentloaded")
+                self.page.wait_for_url(f"**{self.URL}**")
+                self.first_name_input.wait_for(state="visible")
+                self.close_whats_new_modal()
+                return
+            except PlaywrightTimeoutError:
+                if attempt == 1:
+                    raise
 
     def fill_basic_information(self, first_name: str, last_name: str):
         self.first_name_input.clear()
@@ -54,9 +52,7 @@ class PersonalInformationPage(BasePage):
         self.last_name_input.fill(last_name)
 
     def save_basic_information(self):
-        self.save_basic_button.click()
-
-    def save_changes(self):
+        self.close_whats_new_modal()
         self.save_basic_button.click()
 
     def fill_password(self, new_password: str, confirm_password: str):
@@ -64,5 +60,6 @@ class PersonalInformationPage(BasePage):
         self.confirm_password_input.fill(confirm_password)
 
     def submit_password_change(self):
+        self.close_whats_new_modal()
         self.confirm_password_button.click()
 
