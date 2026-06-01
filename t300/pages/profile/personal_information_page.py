@@ -39,6 +39,7 @@ class PersonalInformationPage(BasePage):
                 self.page.goto(profile_url, wait_until="domcontentloaded")
                 self.page.wait_for_url(f"**{self.URL}**")
                 self.first_name_input.wait_for(state="visible")
+                self.close_whats_new_modal()
                 return
             except PlaywrightTimeoutError:
                 if attempt == 1:
@@ -51,6 +52,7 @@ class PersonalInformationPage(BasePage):
         self.last_name_input.fill(last_name)
 
     def save_basic_information(self):
+        self.close_whats_new_modal()
         self.save_basic_button.click()
 
     def fill_password(self, new_password: str, confirm_password: str):
@@ -58,4 +60,6 @@ class PersonalInformationPage(BasePage):
         self.confirm_password_input.fill(confirm_password)
 
     def submit_password_change(self):
+        self.close_whats_new_modal()
         self.confirm_password_button.click()
+

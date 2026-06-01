@@ -26,7 +26,7 @@ def test_manager_can_login(app):
 
 
 def test_homepage_and_ui_login(app):
-    expect(app.page).to_have_url(re.compile(r".*\/en\/?"))
+    expect(app.page).to_have_url(re.compile(r".*\/(en|ru|sr)\/?"))
 
     app.auth.login(MANAGER_USER["email"], MANAGER_USER["password"])
 

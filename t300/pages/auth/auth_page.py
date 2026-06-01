@@ -5,17 +5,14 @@ class AuthPage(BasePage):
     def __init__(self, page):
         super().__init__(page)
 
-        self.header_login_button = page.locator("header").get_by_text(
-            "Sign In", exact=True
-        )
-        self.login_title = page.get_by_text("Login to profile")
-        self.email_input = page.get_by_placeholder("Email")
-        self.password_input = page.get_by_placeholder("Password")
+        self.header_login_button = page.locator("header button.ml-4")
+
+        self.login_title = page.locator("header form")
+        self.email_input = page.locator("input[name='email']")
+        self.password_input = page.locator("input[type='password']")
         self.login_form = page.locator("form").filter(has=self.email_input)
-        self.submit_sign_in_button = self.login_form.get_by_role(
-            "button", name="Sign In"
-        )
-        self.profile_link = page.locator("header").get_by_role("link", name="Profile")
+        self.submit_sign_in_button = self.login_form.locator("button[type='submit']")
+        self.profile_link = page.locator("header a[href$='/user']")
 
     def open_login_form(self):
         self.header_login_button.click()

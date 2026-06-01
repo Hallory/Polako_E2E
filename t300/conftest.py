@@ -5,46 +5,53 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from utils.api_utils import get_api_auth_state
 
 
-def create_api_auth_app(page):
-    profile_url = f"{BASE_URL.rstrip('/')}/user/personal-information"
-
-    for attempt in range(2):
-        auth_state = get_api_auth_state(
-            BASE_URL, MANAGER_USER["email"], MANAGER_USER["password"]
-        )
-
-        page.context.clear_cookies()
-        page.context.add_cookies(auth_state["cookies"])
-
-        try:
-            with page.expect_response(
-                lambda response: "/api/auth/refresh" in response.url and response.ok
-            ):
-                page.goto(BASE_URL, wait_until="domcontentloaded")
-
-            page.goto(profile_url, wait_until="domcontentloaded")
-            page.wait_for_url("**/user/personal-information**")
-            page.locator("input[name='first_name']").wait_for(state="visible")
-            break
-        except PlaywrightTimeoutError:
-            if attempt == 1:
-                raise
-
+def create_api_auth_app(page, auth_state):
+    page.context.clear_cookies()
+    page.context.add_cookies(auth_state["cookies"])
     return App(page)
 
 
 @pytest.fixture(scope="function")
 def app(page):
-    page.set_viewport_size({"width": 1366, "height": 768})
+    page.set_viewport_size({"width": 1920, "height": 1080})
     page.goto(BASE_URL)
     return App(page)
 
 
-@pytest.fixture(scope="function")
-def manager_app(page):
-    return create_api_auth_app(page)
+@pytest.fixture(scope="session")
+def api_auth_state():
+    return get_api_auth_state(
+        BASE_URL, MANAGER_USER["email"], MANAGER_USER["password"]
+    )
 
 
 @pytest.fixture(scope="function")
-def api_auth_app(page):
-    return create_api_auth_app(page)
+def manager_app(page, api_auth_state):
+    return create_api_auth_app(page, api_auth_state)
+
+
+@pytest.fixture(scope="function")
+def api_auth_app(page, api_auth_state):
+    return create_api_auth_app(page, api_auth_state)
+
+
+@pytest.fixture(scope="session")
+def auth_profile_app(browser, api_auth_state):
+    context = browser.new_context()
+    context.add_cookies(api_auth_state["cookies"])
+    page = context.new_page()
+    app = App(page)
+
+    try:
+        with page.expect_response(
+            lambda response: "/api/auth/refresh" in response.url and response.ok,
+            timeout=10000,
+        ):
+            page.goto(BASE_URL, wait_until="domcontentloaded")
+    except PlaywrightTimeoutError:
+        page.goto(BASE_URL, wait_until="domcontentloaded")
+
+    app.profile.open()
+    app.profile.close_whats_new_modal()
+    yield app
+    context.close()
