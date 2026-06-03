@@ -1,5 +1,6 @@
 import re
 import pytest
+from data.test_data import PROFILE_EDITABLE_USER, PROFILE_UPDATE_USER
 from playwright.sync_api import expect
 
 
@@ -39,12 +40,18 @@ def test_update_basic_information(auth_profile_app):
     original_last_name = auth_profile_app.profile.last_name_input.input_value()
 
     try:
-        auth_profile_app.profile.fill_basic_information("Test", "User")
+        auth_profile_app.profile.fill_basic_information(
+            PROFILE_UPDATE_USER["first_name"], PROFILE_UPDATE_USER["last_name"]
+        )
         auth_profile_app.profile.save_basic_information()
 
         expect(auth_profile_app.page).to_have_url(re.compile(auth_profile_app.profile.URL))
-        expect(auth_profile_app.profile.first_name_input).to_have_value("Test")
-        expect(auth_profile_app.profile.last_name_input).to_have_value("User")
+        expect(auth_profile_app.profile.first_name_input).to_have_value(
+            PROFILE_UPDATE_USER["first_name"]
+        )
+        expect(auth_profile_app.profile.last_name_input).to_have_value(
+            PROFILE_UPDATE_USER["last_name"]
+        )
     finally:
         auth_profile_app.profile.fill_basic_information(
             original_first_name, original_last_name
@@ -54,6 +61,12 @@ def test_update_basic_information(auth_profile_app):
 
 @pytest.mark.regression
 def test_basic_info_inputs_are_editable(auth_profile_app):
-    auth_profile_app.profile.fill_basic_information("AutoFirst", "AutoLast")
-    expect(auth_profile_app.profile.first_name_input).to_have_value("AutoFirst")
-    expect(auth_profile_app.profile.last_name_input).to_have_value("AutoLast")
+    auth_profile_app.profile.fill_basic_information(
+        PROFILE_EDITABLE_USER["first_name"], PROFILE_EDITABLE_USER["last_name"]
+    )
+    expect(auth_profile_app.profile.first_name_input).to_have_value(
+        PROFILE_EDITABLE_USER["first_name"]
+    )
+    expect(auth_profile_app.profile.last_name_input).to_have_value(
+        PROFILE_EDITABLE_USER["last_name"]
+    )
