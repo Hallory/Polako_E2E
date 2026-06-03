@@ -6,9 +6,12 @@ on:
       - master
       - dev
       - t300-main
+      - develop-t300
   pull_request:
     branches:
       - master
+      - t300-main
+      - develop-t300
 
 jobs:
   e2e-tests:
